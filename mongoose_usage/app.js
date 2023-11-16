@@ -4,9 +4,9 @@ const path = require("path");
 const morgan = require("morgan");
 const nunjucks = require("nunjucks");
 const connecty = require("./index");
-const indexRouter = require("./routes/index");
-const usersRouter = require("./routes/users");
-const commentsRouter = require("./routes/comments");
+const indexRouter = require("./route/index");
+const usersRouter = require("./route/users");
+const commentsRouter = require("./route/comments");
 
 const app = express();
 

@@ -1,6 +1,6 @@
 const express = require("express");
-const User = require("../schemas/user");
-const Comment = require("../schemas/comment");
+const User = require("../schemas/users");
+const Comment = require("../schemas/comments");
 
 const router = express.Router();
 
