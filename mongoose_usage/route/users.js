@@ -2,9 +2,9 @@ const express = require("express");
 const User = require("../schemas/users");
 const Comment = require("../schemas/comments");
 
-const router = express.Router();
+const usersRouter = express.Router();
 
-router
+usersRouter
   .route("/")
   .get(async (req, res, next) => {
     try {
@@ -30,7 +30,7 @@ router
     }
   });
 
-router.get("/:id/comments", async (req, res, next) => {
+usersRouter.get("/:id/comments", async (req, res, next) => {
   try {
     const comments = await Comment.find({ commenter: req.params.id }).populate(
       "commenter"
@@ -43,4 +43,4 @@ router.get("/:id/comments", async (req, res, next) => {
   }
 });
 
-module.exports = router;
+module.exports = usersRouter;

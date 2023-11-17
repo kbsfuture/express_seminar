@@ -37,3 +37,8 @@ const connecty = () => {
 };
 
 module.exports = connecty;
+
+// 1) db 연결
+// 2) app.js를 통해 route와 미들웨어 설정
+// 3) schema 설정
+// 4) 각 route 내에서 url 따고 schema 연동 후 crud 작업

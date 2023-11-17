@@ -1,9 +1,9 @@
 const express = require("express");
 const Comment = require("../schemas/comments");
 
-const router = express.Router();
+const commentsRouter = express.Router();
 
-router.post("/", async (req, res, next) => {
+commentsRouter.post("/", async (req, res, next) => {
   try {
     const comment = await Comment.create({
       commenter: req.body.id,
@@ -21,7 +21,7 @@ router.post("/", async (req, res, next) => {
   }
 });
 
-router
+commentsRouter
   .route("/:id")
   .patch(async (req, res, next) => {
     try {
@@ -49,4 +49,4 @@ router
     }
   });
 
-module.exports = router;
+module.exports = commentsRouter;
