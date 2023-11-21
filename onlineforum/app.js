@@ -4,10 +4,19 @@ const handlebars = require("express-handlebars");
 
 const app = express();
 
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+
 const mongodbConnection = require("./configs/mongodb-connection");
 
-app.engine("handlebars", handlebars.engine());
+const postService = require("./services/post-service");
 
+app.engine(
+  "handlebars",
+  handlebars.create({
+    helpers: require("./configs/handlebars-helper"),
+  }).engine
+);
 app.set("view engine", "handlebars");
 
 app.set("views", __dirname + "/viewso");
@@ -26,6 +35,15 @@ app.get("/write", (req, res) => {
   res.render("write", { title: "test bulletin" });
 });
 
+app.post("/write", async (req, res) => {
+  const post = req.body;
+  console.log(post);
+
+  const result = await postService.writePost(collection, post);
+  console.log(result);
+  res.redirect("/detail/${result.insertedId}");
+});
+
 app.get("/detail/:id", async (req, res) => {
   res.render("detail", { title: "test bulle" });
 });
@@ -34,6 +52,7 @@ let collection;
 app.listen(3001, async () => {
   console.log("onlineforum server started");
   const mongoClient = await mongodbConnection();
+  collection = mongoClient.db("boardo").collection("soljenni");
   console.log("mongodb connected");
 });
 
