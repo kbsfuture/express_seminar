@@ -35,13 +35,14 @@ app.get("/write", (req, res) => {
   res.render("write", { title: "test bulletin" });
 });
 
+//글쓰기 api
 app.post("/write", async (req, res) => {
   const post = req.body;
   console.log(post);
 
   const result = await postService.writePost(collection, post);
   console.log(result);
-  res.redirect("/detail/${result.insertedId}");
+  res.redirect(`/detail/${result.insertedId}`);
 });
 
 app.get("/detail/:id", async (req, res) => {
@@ -53,6 +54,7 @@ app.listen(3001, async () => {
   console.log("onlineforum server started");
   const mongoClient = await mongodbConnection();
   collection = mongoClient.db("boardo").collection("soljenni");
+  //   collection은 특정 db의 특정 collection을 의미합니다
   console.log("mongodb connected");
 });
 
