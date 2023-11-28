@@ -22,9 +22,12 @@ app.set("view engine", "handlebars");
 app.set("views", __dirname + "/viewso");
 //뷰 디렉토리를 views로 설정
 
-app.get("/", (req, res) => {
+app.get("/", async (req, res) => {
+  const page = parseInt(req.query.page) || 1;
+  const search = req.query.search || "";
   try {
-    res.render("home", { title: "test bulletin", message: "ahente" });
+    const [posts, paginator] = await postService.list(collection, page, search);
+    res.render("home", { title: "test bulletin", search, paginator, posts });
   } catch (error) {
     console.error(error);
     res.render("home", { title: "test bulletin" }); // 에러가 나는 경우는 빈값으로 렌더링
@@ -45,13 +48,17 @@ app.post("/write", async (req, res) => {
   res.redirect(`/detail/${result.insertedId}`);
 });
 
+//상세페이지 api
 app.get("/detail/:id", async (req, res) => {
-  res.render("detail", { title: "test bulle" });
+  // id 정보를 db에 넘겨서 게시글의 데이터를 가져옴
+  const result = await postService.getDetailPost(collection, req.params.id);
+  console.log(result);
+  res.render("detail", { title: "test bulletn", post: result });
 });
 
 let collection;
 app.listen(3001, async () => {
-  console.log("onlineforum server started");
+  console.log("onlineforum server start");
   const mongoClient = await mongodbConnection();
   collection = mongoClient.db("boardo").collection("soljenni");
   //   collection은 특정 db의 특정 collection을 의미합니다
