@@ -56,6 +56,22 @@ app.get("/detail/:id", async (req, res) => {
   res.render("detail", { title: "test bulletn", post: result });
 });
 
+app.post("/check-password", async (req, res) => {
+  const { id, password } = req.body;
+
+  const post = await postService.getPostByIdAndPassword(collection, {
+    id,
+    password,
+  });
+
+  //   데이터가 있으면 isExist true, 없으면 isExist false
+  if (!post) {
+    return res.status(400).json({ isExist: false });
+  } else {
+    return res.json({ isExist: true });
+  }
+});
+
 let collection;
 app.listen(3001, async () => {
   console.log("onlineforum server start");

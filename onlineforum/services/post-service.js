@@ -4,7 +4,7 @@ const { ObjectId } = require("mongodb");
 const projectionOption = {
   projection: {
     password: 0,
-    "comments.password": 0,
+    // "comments.password": 0,
   },
 };
 
@@ -25,7 +25,6 @@ async function list(collection, page, search) {
     .find(query, { limit: perPage, skip: (page - 1) * perPage })
     .sort({ createdDt: -1 });
 
-  console.log(await cursor);
   const totalCount = await collection.count(query);
   const posts = await cursor.toArray();
 
@@ -35,6 +34,7 @@ async function list(collection, page, search) {
 }
 
 async function getDetailPost(collection, id) {
+  console.log(id);
   return await collection.findOneAndUpdate(
     { _id: new ObjectId(id) },
     { $inc: { hits: 1 } },
@@ -42,8 +42,29 @@ async function getDetailPost(collection, id) {
   );
 }
 
+async function getPostByIdAndPassword(collection, { id, password }) {
+  return await collection.findOne(
+    { _id: ObjectId(id), password: password },
+    projectionOption
+  );
+}
+
+async function getPostById(collection, id) {
+  return await collection.findOne({ _id: ObjectId(id) }, projectionOption);
+}
+
+async function updatePost(collection, id, post) {
+  const toUpdatePost = {
+    $set: { ...post },
+  };
+  return await collection.updateOne({ _id: ObjectId(id) }, toUpdatePost);
+}
+
 module.exports = {
   list,
   writePost,
   getDetailPost,
+  getPostByIdAndPassword,
+  getPostById,
+  updatePost,
 };
