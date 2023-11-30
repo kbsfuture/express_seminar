@@ -1,10 +1,18 @@
+
+<!-- ❶ mode에 따라 문구 변경 -->
+<h1>[{{title}}] 글 {{#if (eq mode "create")}}작성{{else}}수정{{/if}}</h1>
+
 <div>
-  <form name="boardForm" method="post" action="/write" >
-   
+  <form name="boardForm" method="post"{{#if (eq mode "create" )}}action="/write" {{else}}action="/modify" {{/if}}>
+    {{#if (eq mode "modify")}}
+    <input type="hidden" name="id" value="{{post._id}}" />
+    {{/if}}
+    
+    <!-- ❹ 수정 모드인 경우 제목을 넣어줍니다.  -->
 
     <div>
       <label>제목</label>
-      <input type="text" name="title" placeholder="제목을 넣어주세요" value="{{post.title}}" />
+      <input type"text" name="title" placeholder="제목을 넣어주세요" value="{{post.title}}" />
     </div>
     <!-- ❺ 수정 모드인 경우 이름을 넣어줍니다.  -->
     <div>
