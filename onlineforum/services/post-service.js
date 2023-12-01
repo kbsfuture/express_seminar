@@ -11,6 +11,13 @@ const projectionOption = {
 async function writePost(collection, post) {
   post.hits = 0;
   post.createdDt = new Date().toISOString();
+  // let lastInsertedId;
+
+  // for (let i = 0; i < 20; i++) {
+  //   let newPost = { ...post, _id: new ObjectId() };
+
+  //   await collection.insertOne(newPost);
+  // }
   return await collection.insertOne(post);
 }
 
@@ -34,7 +41,7 @@ async function list(collection, page, search) {
 }
 
 async function getDetailPost(collection, id) {
-  console.log(id);
+  // console.log(id);
   return await collection.findOneAndUpdate(
     { _id: new ObjectId(id) },
     { $inc: { hits: 1 } },

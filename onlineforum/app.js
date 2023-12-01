@@ -88,6 +88,7 @@ app.get("/detail/:id", async (req, res) => {
   // id 정보를 db에 넘겨서 게시글의 데이터를 가져옴
   const result = await postService.getDetailPost(collection, req.params.id);
   console.log(result);
+
   res.render("detail", { title: "test bulletn", post: result });
 });
 
@@ -111,11 +112,11 @@ app.delete("/delete", async (req, res) => {
   const { id, password } = req.body;
   try {
     const result = await collection.deleteOne({
-      _id: ObjectId(id),
+      _id: new ObjectId(id),
       password: password,
     });
 
-    if (result.deleteCount !== 1) {
+    if (result.deletedCount !== 1) {
       console.log("삭제 실패");
       return res.json({ isSuccess: false });
     }
@@ -126,6 +127,57 @@ app.delete("/delete", async (req, res) => {
     console.error(error);
     return res.json({ isSuccess: false });
   }
+});
+
+app.post("/write-comment", async (req, res) => {
+  //body에서 data를 가져오기
+  const { id, name, password, comment } = req.body;
+
+  const post = await postService.getPostById(collection, id);
+
+  if (post.comments) {
+    post.comments.push({
+      idx: post.comments.length + 1,
+      name,
+      password,
+      comment,
+      createdDt: new Date().toISOString(),
+    });
+  } else {
+    post.comments = [
+      {
+        idx: 1,
+        name,
+        password,
+        comment,
+        createdDt: new Date().toISOString,
+      },
+    ];
+  }
+
+  postService.updatePost(collection, id, post);
+  return res.redirect(`/detail/${id}`);
+});
+
+//댓글 삭제
+
+app.delete("/delete-comment", async (req, res) => {
+  const { id, idx, password } = req.body;
+  const post = await collection.findOne(
+    {
+      _id: new ObjectId(id),
+      comments: { $elemMatch: { idx: parseInt(idx), password } },
+    },
+
+    postService.projectionOption
+  );
+  console.log(post);
+  if (!post) {
+    return res.json({ isSuccess: false });
+  }
+  post.comments = post.comments.filter((comment) => comment.idx != idx);
+  postService.updatePost(collection, id, post);
+  return res.json({ isSuccess: true });
 });
 
 let collection;
